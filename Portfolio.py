@@ -1,4 +1,6 @@
+import plotly.graph_objects as go
 import streamlit as st
+import seaborn as sns
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -32,9 +34,9 @@ with haha1:
     volatility_by_ticker = pd.read_csv('volatility-by-ticker.csv')
     CVaR_by_ticker = pd.read_csv('CVaR-by-Ticker.csv')
     drawdown_csv = pd.read_csv('data-with-drawdown.csv')
-    drawdown_csv = drawdown_csv.dropna(subset=['Return'])
+    dropped_drawdown_csv = drawdown_csv.dropna(subset=['Return'])
 
-    tickers = drawdown_csv['Ticker'].unique()
+    tickers = dropped_drawdown_csv['Ticker'].unique()
 
     selected_tickers = st.sidebar.multiselect(
         "Chose Companies:",
@@ -43,7 +45,7 @@ with haha1:
     )
 
     if selected_tickers:
-        portfolio_data_1 = drawdown_csv[drawdown_csv['Ticker'].isin(selected_tickers)]
+        portfolio_data_1 = dropped_drawdown_csv[dropped_drawdown_csv['Ticker'].isin(selected_tickers)]
         portfolio_data = portfolio_data_1.groupby(['Date', 'Ticker'])['Return'].mean().reset_index()
         returns_pivot = portfolio_data.pivot(index='Date', columns='Ticker', values='Return')
         
@@ -88,8 +90,8 @@ with haha1:
             with col1:
                 st.markdown(
                 f"""
-                    <div style="background-color:#6c3520; border:0px solid black; box-shadow: 20px 20px 20px rgba(0,0,0,0.7); padding:10px;border-radius:62px;">
-                        <h4 style="color:#ffe6d6; font-size:20px; text-align:center;">Portfolio Return</h4>
+                    <div style="background-color:#141b60; border:0px solid black; box-shadow: 2px 2px 2px rgba(255,255,255,0.4); padding:2px;border-radius:62px;">
+                        <h4 style="color:#ffe6d6; font-size:12px; text-align:center;">Port Return</h4>
                         <p style="font-size:15px;color:#ffe6d6;text-align:center;">{portfolio_return*100:.2f}%</p>
                     </div>
                 """,
@@ -99,9 +101,9 @@ with haha1:
             with col2:
                 st.markdown(
                 f"""
-                    <div style="background-color:#ffe6d6; border:0px solid black; box-shadow: 20px 20px 20px rgba(0,0,0,0.7); padding:10px;border-radius:62px;">
-                        <h4 style="color:#6c3520;font-size:20px; text-align:center;">Portfolio Volatility</h4>
-                        <p style="font-size:15px;color:#6c3520;text-align:center;">{port_volatility*100:.2f}%</p>
+                    <div style="background-color:#141b60; border:0px solid black; box-shadow: 2px 2px 2px rgba(255,255,255,0.4); padding:2px;border-radius:62px;">
+                        <h4 style="color:#ffe6d6;font-size:12px; text-align:center;">Port Volatility</h4>
+                        <p style="font-size:15px;color:#ffe6d6;text-align:center;">{port_volatility*100:.2f}%</p>
                     </div>
                 """,
                 unsafe_allow_html=True
@@ -110,8 +112,8 @@ with haha1:
             with col3:
                 st.markdown(
                 f"""
-                    <div style="background-color:#6c3520; border:0px solid black; box-shadow: 20px 20px 20px rgba(0,0,0,0.7); padding:10px;border-radius:62px;">
-                        <h4 style="color:#ffe6d6;font-size:20px; text-align:center;">Portfolio VaR</h4>
+                    <div style="background-color:#141b60; border:0px solid black; box-shadow: 2px 2px 2px rgba(255,255,255,0.4); padding:2px;border-radius:62px;">
+                        <h4 style="color:#ffe6d6;font-size:12px; text-align:center;">Port VaR</h4>
                         <p style="font-size:15px;color:#ffe6d6;text-align:center;">{port_VaR_95*100:.2f}%</p>
                     </div>
                 """,
@@ -121,9 +123,9 @@ with haha1:
             with col4:
                 st.markdown(
                 f"""
-                    <div style="background-color:#ffe6d6; border:0px solid black; box-shadow: 20px 20px 20px rgba(0,0,0,0.7); padding:10px;border-radius:62px;">
-                        <h4 style="color:#6c3520;font-size:20px; text-align:center;">Portfolio CVaR</h4>
-                        <p style="font-size:15px;color:#6c3520;text-align:center;">{port_CVaR_95*100:.2f}%</p>
+                    <div style="background-color:#141b60; border:0px solid black; box-shadow: 2px 2px 2px rgba(255,255,255,0.4); padding:2px;border-radius:62px;">
+                        <h4 style="color:#ffe6d6;font-size:12px; text-align:center;">Port CVaR</h4>
+                        <p style="font-size:15px;color:#ffe6d6;text-align:center;">{port_CVaR_95*100:.2f}%</p>
                     </div>
                 """,
                 unsafe_allow_html=True
@@ -209,15 +211,15 @@ with haha1:
             with col1:
                 st.markdown(f"""
                 <div style='background:#6c3520;padding:10px;border-radius:10px; box-shadow: 10px 10px 10px rgba(0,0,0,0.7);text-align:center'>
-                    <h7 style='color:white;'>Sharpe Ratio </h7>
-                    <h6 style='color:yellow;'>{round(sharpe_ratio, 3)}</h6>
+                    <h8 style='color:white;'>Sharpe Ratio </h8>
+                    <h8 style='color:yellow;'>{round(sharpe_ratio, 3)}</h8>
                 </div>
                 """, unsafe_allow_html=True)
             with col2:
                 st.markdown(f"""
                 <div style='background:#3e4cd7; padding:10px; box-shadow: 10px 10px 10px rgba(0,0,0,0.7); border-radius:10px;text-align:center'>
-                    <h7 style='color:#ffe6d6;'>Sortino Ratio</h7>
-                    <h6 style='color:yellow;'>{round(sortino_ratio, 3)}</h6>
+                    <h8 style='color:#ffe6d6;'>Sortino Ratio</h8>
+                    <h8 style='color:yellow;'>{round(sortino_ratio, 3)}</h8>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -296,9 +298,6 @@ with haha1:
             ax3.grid(True)
             st.pyplot(figure)
 
-            # huihui
-            if st.checkbox("huihui"):
-                st.write(rolling_volatility)
 
 # SIngle-Ticker Analysis
 with haha2:
@@ -307,16 +306,16 @@ with haha2:
         st.markdown("""
                 <h4 style="padding-top:7rem; color:yellow ">Single-Ticker Risk Metric</h4>
                 """, unsafe_allow_html=True)
-        tickers = drawdown_csv['Ticker'].unique()
+        tickers = dropped_drawdown_csv['Ticker'].unique()
 
         selected_ticker = st.selectbox(
             'Choose a Company',
             tickers
         )
         # Drawdown For Ticker
-        st.markdown(f'###### Drawndown For {selected_ticker}')
+        st.markdown(f'###### Drawndown per day for {selected_ticker}')
 
-        drawdown_for_ticker = drawdown_csv.groupby('Ticker')
+        drawdown_for_ticker = dropped_drawdown_csv.groupby('Ticker')
         drawdown_for_ticker = drawdown_for_ticker.get_group(selected_ticker)
 
         # color code
@@ -335,6 +334,33 @@ with haha2:
         st.pyplot(fig)
 
         st.markdown("---------------------")
+
+        # Donut CHart for percentage of return of each stock
+        st.markdown('###### Return (%) per Ticker')
+        weights = pd.Series(weights, index=selected_tickers)
+        weighted_returns = mean_of_returns * weights
+        percentage_of_returns = weighted_returns/weighted_returns.sum()*100
+
+        fig = go.Figure(data=[go.Pie(
+                labels= selected_tickers,
+                values=abs(percentage_of_returns),
+                hole=0.5,
+                hovertext=[f"{'+' if val>0 else ''}{val:.2f}%" for ticker, val in percentage_of_returns.items()],
+                hoverinfo ='text',
+                textinfo='none'
+        )])
+        fig.update_layout(
+            margin=dict(t=0, b=0, l=0, r=0),width=80, height=130,
+            legend=dict(
+                x=0,
+                y=0.5,
+                xanchor='right',
+                yanchor='top'
+            )
+        )
+
+        st.plotly_chart(fig)
+
 
     with co2:
         # Volatility, VaR, Cvar Calculation
@@ -370,7 +396,7 @@ with haha2:
                     <th>CVaR</th>
                 </tr>
                 <tr>
-                    <td>{avg_return_per_stock:.2f}</td>
+                    <td>{avg_return_per_stock:.4f}</td>
                     <td>{volatility:.2f}</td>
                     <td>{VaR:.2f}</td>
                     <td>{CVaR:.2f}</td>
@@ -383,11 +409,11 @@ with haha2:
         st.markdown("")
         st.markdown("")
         st.markdown("")
-        st.markdown(f'###### Histogram of Daily Returns for {selected_ticker}')
+        st.markdown(f'###### Distribution of Daily Returns - {selected_ticker}')
 
         color2 = color_map(color_index+3)
 
-        return_by_ticker = drawdown_csv.groupby('Ticker')
+        return_by_ticker = dropped_drawdown_csv.groupby('Ticker')
         return_by_ticker = return_by_ticker.get_group(selected_ticker)
 
         fig1, ax = plt.subplots(figsize=(25,9), facecolor='#5e5152')
@@ -400,3 +426,53 @@ with haha2:
         st.pyplot(fig1)
 
         st.markdown("---------------------")
+
+        # HEatmap VaR
+        vol_selected_tickers = volatility_by_ticker[volatility_by_ticker['Ticker'].isin(selected_tickers)]
+        var_selected_tickers = VaR_by_ticker[VaR_by_ticker['Ticker'].isin(selected_tickers)]
+        cvar_selected_tickers = CVaR_by_ticker[CVaR_by_ticker['Ticker'].isin(selected_tickers)]
+
+        heatmap_df = pd.concat([
+            vol_selected_tickers.set_index('Ticker')['Return'].rename('Volatility'),
+            var_selected_tickers.set_index('Ticker')['Return'].rename('VaR'),
+            cvar_selected_tickers.set_index('Ticker')['Return'].rename('CVaR')
+        ], axis=1)
+
+        # Visualizing heatmap
+        fig, ax = plt.subplots(figsize=(7,4), facecolor="#a684a7")
+        sns.heatmap(
+            heatmap_df,
+            annot=True,
+            cmap='plasma',
+            fmt='.2f',
+            ax=ax
+        )
+        ax.set_title("Risk Heatmap")
+        st.pyplot(fig)
+    
+
+    # Potfolio Divident yeild 
+
+    df_for_yield = drawdown_csv[drawdown_csv['Ticker'].isin(selected_tickers)]
+    df_for_yield = df_for_yield[['Date', 'Ticker', 'Dividend Yield']]
+    df_for_yield['Weights'] = df_for_yield['Ticker'].map(weights)
+    df_for_yield['Weighted_Yield'] = df_for_yield['Weights'] * df_for_yield['Dividend Yield']
+    port_div_yield = df_for_yield.groupby('Date')['Weighted_Yield'].sum()
+    
+    #plot for div yeild
+
+    # fig, ax = subplots()
+    # ax.plot(port_div_yield.index, port_div_yield['Weighted_Yield'])
+    # st.pyplot()
+    st.markdown("###### Portfolio Dividend Yeild")
+    fig = go.Figure(data=[go.Scatter(
+        x=port_div_yield.index,
+        y=port_div_yield,
+        mode='lines+markers',
+        line=dict(color="#a9e733"),
+    )])
+    fig.update_layout(margin=dict(t=0,b=0),width=600,height=210,xaxis_title='Date',yaxis_title='Dividend Yield')
+    st.plotly_chart(fig)
+
+    # huihui
+    # st.write(avg_return_per_stock)
